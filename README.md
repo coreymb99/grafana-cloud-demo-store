@@ -4,6 +4,10 @@ This is a small ecommerce-style service instrumented with OpenTelemetry and wire
 It is designed to be easy to run locally, generate realistic telemetry, and demonstrate traces, metrics,
 and logs working together around a checkout flow.
 
+The demo is centered on **Northstar Mercantile**, a fictional premium ecommerce brand for engineering teams.
+The service models a customer-critical checkout path with realistic browse traffic, checkout attempts, payment failures,
+and dependency latency so the resulting telemetry feels closer to a production workload than a toy app.
+
 - realistic HTTP traffic instead of a hello-world app
 - a localhost control room UI for a polished live demo
 - traces that break checkout into inventory, pricing, shipping, and payment spans
@@ -18,6 +22,16 @@ and logs working together around a checkout flow.
 - a localhost control room UI for scenario-driven traffic generation
 - a custom Grafana dashboard JSON for demo visualization
 - multiple scenarios such as steady state, payment incident, inventory hotspot, and flash sale
+
+## Demo domain
+
+Northstar Mercantile sells premium apparel, office goods, and engineering-themed merchandise.
+The demo focuses on the checkout-service because it is the most operationally sensitive part of the customer journey:
+
+- browse and product lookups create normal background traffic
+- checkout spans break down into inventory, pricing, shipping, and payment work
+- payment degradation and authorization failures create a realistic incident pattern
+- business metrics make it possible to relate technical regressions to checkout success and revenue
 
 ## Architecture
 

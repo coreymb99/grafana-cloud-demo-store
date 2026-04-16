@@ -396,7 +396,7 @@ def render_demo_console() -> str:
   <main class="shell">
     <section class="hero">
       <div>
-        <div class="eyebrow">Grafana Cloud Interview Demo</div>
+        <div class="eyebrow">Grafana Cloud Observability Demo</div>
         <div class="company-badge">Northstar Mercantile</div>
         <h1>Demo Store Control Room</h1>
         <p class="lead">
@@ -472,7 +472,7 @@ def render_demo_console() -> str:
           </div>
         </div>
         <div class="incident-callout">
-          <strong>Why the payment incident lands well in an interview</strong>
+          <strong>Why the payment incident is useful</strong>
           It creates a visible customer-impact story: users can browse and add to cart, but checkout slows down and some orders fail,
           which gives you a clean path from signals to root cause to revenue impact.
         </div>
@@ -481,7 +481,7 @@ def render_demo_console() -> str:
 
     <section class="grid">
       <div class="panel">
-        <h2>Interview Story Beats</h2>
+        <h2>Operational Story Beats</h2>
         <p class="muted">Use these talking points while data is streaming into Grafana Cloud.</p>
         <div class="story-list">
           <div class="story-item">

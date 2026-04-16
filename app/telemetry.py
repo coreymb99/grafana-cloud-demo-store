@@ -25,7 +25,7 @@ _shutdown_complete = False
 def _resource() -> Resource:
     resource_attributes = {
         "service.name": os.getenv("OTEL_SERVICE_NAME", "checkout-service"),
-        "service.namespace": os.getenv("SERVICE_NAMESPACE", "grafana-interview"),
+        "service.namespace": os.getenv("SERVICE_NAMESPACE", "northstar-mercantile"),
         "service.version": os.getenv("SERVICE_VERSION", "0.1.0"),
         "deployment.environment": os.getenv("DEPLOYMENT_ENVIRONMENT", "demo"),
     }

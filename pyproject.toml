@@ -1,7 +1,7 @@
 [project]
 name = "grafana-cloud-demo-store"
 version = "0.1.0"
-description = "Interview-friendly ecommerce demo service instrumented for Grafana Cloud."
+description = "Ecommerce observability demo service instrumented for Grafana Cloud."
 requires-python = ">=3.12"
 dependencies = [
   "fastapi>=0.116.0",
