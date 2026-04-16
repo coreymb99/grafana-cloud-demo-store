@@ -19,6 +19,23 @@ and logs working together around a checkout flow.
 - a custom Grafana dashboard JSON for demo visualization
 - multiple scenarios such as steady state, payment incident, inventory hotspot, and flash sale
 
+## Architecture
+
+```mermaid
+flowchart LR
+    A["Local Demo UI"] --> B["FastAPI Demo Store"]
+    C["Standalone Traffic Generator"] --> B
+    B --> D["OTLP Traces"]
+    B --> E["OTLP Metrics"]
+    B --> F["OTLP Logs"]
+    D --> G["Grafana Cloud"]
+    E --> G
+    F --> G
+    G --> H["Application Observability"]
+    G --> I["Custom Dashboard"]
+    G --> J["Grafana Assistant"]
+```
+
 ## Project layout
 
 - `app/main.py`: FastAPI service and business logic
@@ -46,12 +63,24 @@ With `uv`:
 uv sync
 ```
 
+Or use the included shortcut:
+
+```bash
+make setup
+```
+
 Or with standard Python tools:
 
 ```bash
 python3 -m venv .venv
 . .venv/bin/activate
 pip install -e .
+```
+
+Or use:
+
+```bash
+make setup-venv
 ```
 
 3. Copy the environment template:
@@ -94,6 +123,12 @@ set +a
 .venv/bin/demo-store
 ```
 
+Or use:
+
+```bash
+make run
+```
+
 Then open the local UI:
 
 `http://127.0.0.1:8000`
@@ -112,6 +147,12 @@ set -a
 source .env
 set +a
 .venv/bin/demo-traffic
+```
+
+Or use:
+
+```bash
+make traffic
 ```
 
 ## Runtime Notes
@@ -134,6 +175,7 @@ This repository is self-contained. No machine-specific paths are required.
 - configuration is provided through environment variables in `.env`
 - the default local service URL is `http://127.0.0.1:8000`
 - the dashboard JSON ships in the repository under `dashboard/`
+- common workflows are exposed through `make help`, `make run`, and `make traffic`
 
 ## Suggested Grafana Assistant prompts
 
