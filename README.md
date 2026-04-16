@@ -1,6 +1,8 @@
 # Grafana Cloud Demo Store
 
-This is a small ecommerce-style service built to show a strong Grafana Cloud workflow in an interview:
+This is a small ecommerce-style service instrumented with OpenTelemetry and wired for Grafana Cloud.
+It is designed to be easy to run locally, generate realistic telemetry, and demonstrate traces, metrics,
+and logs working together around a checkout flow.
 
 - realistic HTTP traffic instead of a hello-world app
 - a localhost control room UI for a polished live demo
@@ -9,41 +11,56 @@ This is a small ecommerce-style service built to show a strong Grafana Cloud wor
 - logs correlated with traces so you can pivot from a failure to the related trace
 - a traffic generator to keep the dashboard populated during a demo
 
-## Why this app is a good fit
+## What it includes
 
-For a Senior Solutions Engineer interview, this demo gives you a practical observability story:
-
-- show how to instrument an app directly with OTLP for a fast proof of value
-- explain how the same design would move behind Grafana Alloy in production
-- demonstrate metrics, logs, and traces together instead of treating them as separate tools
-- create a believable incident: elevated payment latency and failures in checkout
+- a FastAPI checkout service with browse, product, and checkout endpoints
+- direct OTLP export to Grafana Cloud for traces, metrics, and logs
+- a localhost control room UI for scenario-driven traffic generation
+- a custom Grafana dashboard JSON for demo visualization
+- multiple scenarios such as steady state, payment incident, inventory hotspot, and flash sale
 
 ## Project layout
 
 - `app/main.py`: FastAPI service and business logic
 - `app/demo_control.py`: live scenario and traffic controls
-- `app/ui.py`: interview-friendly localhost UI
+- `app/ui.py`: localhost control room UI
 - `app/telemetry.py`: OpenTelemetry setup for traces, metrics, and logs
 - `traffic.py`: synthetic load generator
 - `dashboard/storefront-overview.json`: importable Grafana dashboard
 - `.env.example`: Grafana Cloud OTLP environment variable template
 
-## Setup
+## Quick Start
 
-1. Create and sync the environment:
+1. Clone the repository and enter it:
 
 ```bash
-cd /Users/coreybartlett/Documents/Playground/grafana-cloud-demo-store
+git clone https://github.com/coreymb99/grafana-cloud-demo-store.git
+cd grafana-cloud-demo-store
+```
+
+2. Create the environment.
+
+With `uv`:
+
+```bash
 uv sync
 ```
 
-2. Copy the environment template:
+Or with standard Python tools:
+
+```bash
+python3 -m venv .venv
+. .venv/bin/activate
+pip install -e .
+```
+
+3. Copy the environment template:
 
 ```bash
 cp .env.example .env
 ```
 
-3. In Grafana Cloud, open your stack and go to:
+4. In Grafana Cloud, open your stack and go to:
 
 - `Connections`
 - `OpenTelemetry`
@@ -57,7 +74,9 @@ Copy the values for:
 
 Grafana’s OTLP docs note that for Python, the authorization header should use `Basic%20` instead of `Basic `.
 
-4. Run the API and open the demo console:
+5. Run the API and open the demo console:
+
+With `uv`:
 
 ```bash
 set -a
@@ -66,7 +85,16 @@ set +a
 uv run demo-store
 ```
 
-Then open:
+Or with the virtualenv created above:
+
+```bash
+set -a
+source .env
+set +a
+.venv/bin/demo-store
+```
+
+Then open the local UI:
 
 `http://127.0.0.1:8000`
 
@@ -74,32 +102,38 @@ The built-in control room lets you:
 
 - start or stop data generation without a second terminal
 - switch scenarios like steady state, payment incident, inventory hotspot, and flash sale
-- trigger a one-click payment incident for the strongest interview demo
-- show live request, checkout, and error counters before you pivot to Grafana Cloud
-- narrate what the interviewer should see in Grafana Cloud while the data changes
+- trigger a one-click payment incident
+- show live request, checkout, and error counters
 
-5. Optional: if you want a terminal-only mode instead, use the standalone generator in another shell:
+6. Optional: if you want a terminal-only mode instead of the built-in UI, use the standalone generator in another shell:
 
 ```bash
-cd /Users/coreybartlett/Documents/Playground/grafana-cloud-demo-store
 set -a
 source .env
 set +a
-uv run demo-traffic
+.venv/bin/demo-traffic
 ```
 
-## Demo knobs
+## Runtime Notes
 
-For the polished demo, use the localhost UI instead of environment variables. It can change scenarios live without restarting the service.
+The localhost UI can change scenarios live without restarting the service. The terminal traffic generator remains available for scripted or headless use.
 
 ## Dashboard import
 
-Import `/Users/coreybartlett/Documents/Playground/grafana-cloud-demo-store/dashboard/storefront-overview.json` into Grafana and bind:
+Import `dashboard/storefront-overview.json` into Grafana and bind:
 
 - the Prometheus/Mimir data source to the `Metrics` variable
 - the Loki data source to the `Logs` variable
 
 If a metric name looks slightly different in your stack, open Explore and search for `storefront_`. Grafana Cloud converts OpenTelemetry metric names to Prometheus-compatible names by replacing `.` or `-` with `_` and adding standard suffixes such as `_total` or `_seconds`.
+
+## Repository Usage
+
+This repository is self-contained. No machine-specific paths are required.
+
+- configuration is provided through environment variables in `.env`
+- the default local service URL is `http://127.0.0.1:8000`
+- the dashboard JSON ships in the repository under `dashboard/`
 
 ## Suggested Grafana Assistant prompts
 
@@ -111,26 +145,6 @@ Use prompts like these once data is flowing:
 4. `Show me traces related to recent payment_failed logs.`
 5. `Did revenue drop when checkout errors increased?`
 6. `Compare enterprise checkout latency to trial users over the last 30 minutes.`
-
-## Suggested Interview Narrative
-
-Use a story like this:
-
-1. `Northstar Mercantile is a premium ecommerce brand for engineering teams, and this service owns the digital checkout journey.`
-2. `I instrumented it with OpenTelemetry and sent traces, metrics, and logs directly to Grafana Cloud to get to value quickly.`
-3. `In the steady state, we expect healthy browse traffic, stable checkout latency, and a small background level of payment noise.`
-4. `Now I’m going to trigger a payment-provider incident from the localhost control room so we can watch the customer impact appear in real time.`
-5. `In Grafana Cloud, we can see checkout latency climb, failed payments increase, and logs correlate directly with the degraded payment dependency.`
-6. `From there, I can use Application Observability, the custom dashboard, and Grafana AI to move from symptom to probable root cause to business impact.`
-7. `For production, I’d likely put Grafana Alloy in front of this pipeline for resiliency, enrichment, and routing, but for a demo this direct OTLP setup is the fastest proof of value.`
-
-## Interview framing
-
-You can tell the interviewer:
-
-- this uses direct OTLP export because it is the fastest path to value for a demo
-- in production, you would usually place Grafana Alloy between the app and Grafana Cloud for resiliency, enrichment, sampling, and routing
-- the service intentionally emits both technical and business telemetry so the observability conversation reaches customer impact, not just CPU charts
 
 ## References
 
