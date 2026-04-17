@@ -52,19 +52,17 @@ flowchart LR
 
 ## Screenshots
 
-The following views are the most useful screenshots to keep with this project:
+### Local control room
 
-- `Local control room UI`: shows the Northstar Mercantile control plane, scenario controls, and live counters
-- `Grafana Cloud Application Observability`: shows service rate, errors, duration, and dependency behavior
-- `Custom dashboard`: shows request throughput, checkout p95, failed payments, dependency latency, and correlated logs
+![Northstar Mercantile control room](docs/images/control-room.png)
 
-Recommended screenshot set:
+### Grafana Cloud Application Observability
 
-1. localhost control room on a steady-state scenario
-2. Application Observability during a payment incident
-3. `dashboard/storefront-overview.json` populated with live data
+![Grafana Cloud Application Observability](docs/images/application-observability.png)
 
-If you want to maintain screenshots in the repository, place them under `docs/images/` and reference them from this section.
+### Custom dashboard
+
+![Demo Store Overview dashboard](docs/images/custom-dashboard.png)
 
 ## Project layout
 
