@@ -56,9 +56,63 @@ flowchart LR
 - `app/demo_control.py`: live scenario and traffic controls
 - `app/ui.py`: localhost control room UI
 - `app/telemetry.py`: OpenTelemetry setup for traces, metrics, and logs
+- `docs/technical-walkthrough.md`: one-page architecture and implementation overview
 - `traffic.py`: synthetic load generator
 - `dashboard/storefront-overview.json`: importable Grafana dashboard
 - `.env.example`: Grafana Cloud OTLP environment variable template
+
+## Prerequisites
+
+Before running the demo, make sure you have the following:
+
+- Python `3.12` or newer
+- a Grafana Cloud account
+- internet access so the app can export telemetry to Grafana Cloud
+- a modern web browser for the localhost control room and Grafana Cloud UI
+
+Optional but helpful tools:
+
+- `uv` for fast Python environment setup
+- `make` for shortcut commands such as `make run`
+- `git` if you plan to clone the repository instead of downloading it as a ZIP
+
+### Python
+
+This project requires Python `>=3.12`.
+
+You can verify your version with:
+
+```bash
+python3 --version
+```
+
+If you need Python, download it from the official site:
+
+- [python.org/downloads](https://www.python.org/downloads/)
+
+### Grafana Cloud account
+
+If you do not already have a Grafana Cloud account:
+
+1. Go to [grafana.com/products/cloud](https://grafana.com/products/cloud/).
+2. Click `Create free account`.
+3. Complete the account setup flow.
+4. Open your Cloud Portal and create or access your Grafana Cloud stack.
+5. In the stack UI, go to `Connections -> OpenTelemetry -> Configure` to get the OTLP endpoint and headers used by this demo.
+
+Grafana documentation references:
+
+- [Create a Grafana Cloud account](https://grafana.com/docs/grafana-cloud/get-started/create-account/)
+- [Get started with Grafana Cloud](https://grafana.com/docs/grafana-cloud/get-started/)
+
+### How to get the project
+
+You can use this repository in either of these ways:
+
+- clone it with `git clone`
+- download the repository as a ZIP from GitHub and extract it locally
+
+If you download the repository as a ZIP, open a terminal in the extracted `grafana-cloud-demo-store` directory and follow the same setup instructions below.
 
 ## Quick Start
 
@@ -102,6 +156,14 @@ make setup-venv
 ```bash
 cp .env.example .env
 ```
+
+The template includes safe defaults for service metadata such as:
+
+- `OTEL_SERVICE_NAME=checkout-service`
+- `SERVICE_NAMESPACE=northstar-mercantile`
+- `DEPLOYMENT_ENVIRONMENT=demo`
+
+You should replace the OTLP endpoint and headers in `.env` with the values from your own Grafana Cloud stack.
 
 4. In Grafana Cloud, open your stack and go to:
 
@@ -147,6 +209,9 @@ Then open the local UI:
 
 `http://127.0.0.1:8000`
 
+That address is the default local URL for this project because the service binds to port `8000` unless `PORT` is overridden.
+If you start the service on a different port, open the matching local URL instead and update the control room base URL or `DEMO_STORE_URL` accordingly.
+
 The built-in control room lets you:
 
 - start or stop data generation without a second terminal
@@ -173,6 +238,12 @@ make traffic
 
 The localhost UI can change scenarios live without restarting the service. The terminal traffic generator remains available for scripted or headless use.
 
+Default runtime behavior:
+
+- the API binds to `127.0.0.1`/`0.0.0.0` on port `8000` unless `PORT` is set
+- the control room assumes the API is available at `http://127.0.0.1:8000` unless you change the base URL in the UI
+- the standalone traffic generator uses `DEMO_STORE_URL`, which defaults to `http://127.0.0.1:8000`
+
 ## Dashboard import
 
 Import `dashboard/storefront-overview.json` into Grafana and bind:
@@ -187,7 +258,7 @@ If a metric name looks slightly different in your stack, open Explore and search
 This repository is self-contained. No machine-specific paths are required.
 
 - configuration is provided through environment variables in `.env`
-- the default local service URL is `http://127.0.0.1:8000`
+- by default, the service runs at `http://127.0.0.1:8000` unless `PORT` is overridden
 - the dashboard JSON ships in the repository under `dashboard/`
 - common workflows are exposed through `make help`, `make run`, and `make traffic`
 
